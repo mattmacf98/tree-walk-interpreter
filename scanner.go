@@ -1,29 +1,32 @@
 package main
 
-import "strconv"
+import (
+	"strconv"
+	"tree-walk-interpreter/token"
+)
 
-var keywords = map[string]TokenType{
-	"and":    AND,
-	"class":  CLASS,
-	"else":   ELSE,
-	"false":  FALSE,
-	"for":    FOR,
-	"fun":    FUN,
-	"if":     IF,
-	"nil":    NIL,
-	"or":     OR,
-	"print":  PRINT,
-	"return": RETURN,
-	"super":  SUPER,
-	"this":   THIS,
-	"true":   TRUE,
-	"var":    VAR,
-	"while":  WHILE,
+var keywords = map[string]token.TokenType{
+	"and":    token.AND,
+	"class":  token.CLASS,
+	"else":   token.ELSE,
+	"false":  token.FALSE,
+	"for":    token.FOR,
+	"fun":    token.FUN,
+	"if":     token.IF,
+	"nil":    token.NIL,
+	"or":     token.OR,
+	"print":  token.PRINT,
+	"return": token.RETURN,
+	"super":  token.SUPER,
+	"this":   token.THIS,
+	"true":   token.TRUE,
+	"var":    token.VAR,
+	"while":  token.WHILE,
 }
 
 type Scanner struct {
 	source  string
-	tokens  []Token
+	tokens  []token.Token
 	start   int
 	current int
 	line    int
@@ -32,20 +35,20 @@ type Scanner struct {
 func NewScanner(source string) Scanner {
 	return Scanner{
 		source:  source,
-		tokens:  []Token{},
+		tokens:  []token.Token{},
 		start:   0,
 		current: 0,
 		line:    1,
 	}
 }
 
-func (s *Scanner) ScanTokens() []Token {
+func (s *Scanner) ScanTokens() []token.Token {
 	for !s.isAtEnd() {
 		s.start = s.current
 		s.scanToken()
 	}
 
-	s.tokens = append(s.tokens, NewToken(EOF, "", nil, s.line))
+	s.tokens = append(s.tokens, token.NewToken(token.EOF, "", nil, s.line))
 	return s.tokens
 }
 
@@ -58,48 +61,48 @@ func (s *Scanner) scanToken() {
 
 	switch c {
 	case '(':
-		s.addToken(LEFT_PAREN, nil)
+		s.addToken(token.LEFT_PAREN, nil)
 	case ')':
-		s.addToken(RIGHT_PAREN, nil)
+		s.addToken(token.RIGHT_PAREN, nil)
 	case '{':
-		s.addToken(LEFT_BRACE, nil)
+		s.addToken(token.LEFT_BRACE, nil)
 	case '}':
-		s.addToken(RIGHT_BRACE, nil)
+		s.addToken(token.RIGHT_BRACE, nil)
 	case ',':
-		s.addToken(COMMA, nil)
+		s.addToken(token.COMMA, nil)
 	case '.':
-		s.addToken(DOT, nil)
+		s.addToken(token.DOT, nil)
 	case '-':
-		s.addToken(MINUS, nil)
+		s.addToken(token.MINUS, nil)
 	case '+':
-		s.addToken(PLUS, nil)
+		s.addToken(token.PLUS, nil)
 	case ';':
-		s.addToken(SEMICOLON, nil)
+		s.addToken(token.SEMICOLON, nil)
 	case '*':
-		s.addToken(STAR, nil)
+		s.addToken(token.STAR, nil)
 	case '!':
 		if s.match('=') {
-			s.addToken(BANG_EQUAL, nil)
+			s.addToken(token.BANG_EQUAL, nil)
 		} else {
-			s.addToken(BANG, nil)
+			s.addToken(token.BANG, nil)
 		}
 	case '=':
 		if s.match('=') {
-			s.addToken(EQUAL_EQUAL, nil)
+			s.addToken(token.EQUAL_EQUAL, nil)
 		} else {
-			s.addToken(EQUAL, nil)
+			s.addToken(token.EQUAL, nil)
 		}
 	case '>':
 		if s.match('=') {
-			s.addToken(GREATER_EQUAL, nil)
+			s.addToken(token.GREATER_EQUAL, nil)
 		} else {
-			s.addToken(GREATER, nil)
+			s.addToken(token.GREATER, nil)
 		}
 	case '<':
 		if s.match('=') {
-			s.addToken(LESS_EQUAL, nil)
+			s.addToken(token.LESS_EQUAL, nil)
 		} else {
-			s.addToken(LESS, nil)
+			s.addToken(token.LESS, nil)
 		}
 	case '/':
 		if s.match('/') {
@@ -108,7 +111,7 @@ func (s *Scanner) scanToken() {
 				s.advance()
 			}
 		} else {
-			s.addToken(SLASH, nil)
+			s.addToken(token.SLASH, nil)
 		}
 	case ' ', '\r', '\t':
 		// ignore whitespace
@@ -161,7 +164,7 @@ func (s *Scanner) identifier() {
 		return
 	}
 
-	s.addToken(IDENTIFIER, lexeme)
+	s.addToken(token.IDENTIFIER, lexeme)
 }
 
 func (s *Scanner) peek() rune {
@@ -195,9 +198,9 @@ func (s *Scanner) number() {
 	num, err := strconv.ParseFloat(lexeme, 64)
 	if err != nil {
 		Error(s.line, "Invalid number literal.")
-		s.addToken(NUMBER, nil)
+		s.addToken(token.NUMBER, nil)
 	} else {
-		s.addToken(NUMBER, num)
+		s.addToken(token.NUMBER, num)
 	}
 }
 
@@ -217,7 +220,7 @@ func (s *Scanner) string() {
 	// consume closing quote
 	s.advance()
 	value := s.source[s.start+1 : s.current-1]
-	s.addToken(STRING, value)
+	s.addToken(token.STRING, value)
 }
 
 func (s *Scanner) advance() rune {
@@ -226,6 +229,6 @@ func (s *Scanner) advance() rune {
 	return rune(c)
 }
 
-func (s *Scanner) addToken(tokenType TokenType, literal any) {
-	s.tokens = append(s.tokens, NewToken(tokenType, "", literal, s.line))
+func (s *Scanner) addToken(tokenType token.TokenType, literal any) {
+	s.tokens = append(s.tokens, token.NewToken(tokenType, "", literal, s.line))
 }

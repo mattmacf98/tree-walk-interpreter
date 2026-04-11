@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"testing"
+	"tree-walk-interpreter/token"
 )
 
 func loadFile(path string) string {
@@ -19,24 +20,24 @@ func TestScanner(t *testing.T) {
 		scanner := NewScanner(content)
 		tokens := scanner.ScanTokens()
 
-		expectedTokens := []TokenType{
-			LEFT_PAREN,
-			LEFT_PAREN,
-			RIGHT_PAREN,
-			RIGHT_PAREN,
-			LEFT_BRACE,
-			RIGHT_BRACE,
-			BANG,
-			STAR,
-			PLUS,
-			MINUS,
-			SLASH,
-			EQUAL,
-			LESS,
-			GREATER,
-			LESS_EQUAL,
-			EQUAL_EQUAL,
-			EOF,
+		expectedTokens := []token.TokenType{
+			token.LEFT_PAREN,
+			token.LEFT_PAREN,
+			token.RIGHT_PAREN,
+			token.RIGHT_PAREN,
+			token.LEFT_BRACE,
+			token.RIGHT_BRACE,
+			token.BANG,
+			token.STAR,
+			token.PLUS,
+			token.MINUS,
+			token.SLASH,
+			token.EQUAL,
+			token.LESS,
+			token.GREATER,
+			token.LESS_EQUAL,
+			token.EQUAL_EQUAL,
+			token.EOF,
 		}
 
 		if len(tokens) != len(expectedTokens) {
@@ -55,35 +56,35 @@ func TestScanner(t *testing.T) {
 		scanner := NewScanner(content)
 		tokens := scanner.ScanTokens()
 
-		expectedTokens := []TokenType{
-			VAR,
-			IDENTIFIER,
-			EQUAL,
-			STRING,
-			SEMICOLON,
-			FOR,
-			LEFT_PAREN,
-			VAR,
-			IDENTIFIER,
-			EQUAL,
-			NUMBER,
-			SEMICOLON,
-			IDENTIFIER,
-			LESS,
-			NUMBER,
-			SEMICOLON,
-			IDENTIFIER,
-			EQUAL,
-			IDENTIFIER,
-			PLUS,
-			NUMBER,
-			RIGHT_PAREN,
-			LEFT_BRACE,
-			PRINT,
-			IDENTIFIER,
-			SEMICOLON,
-			RIGHT_BRACE,
-			EOF,
+		expectedTokens := []token.TokenType{
+			token.VAR,
+			token.IDENTIFIER,
+			token.EQUAL,
+			token.STRING,
+			token.SEMICOLON,
+			token.FOR,
+			token.LEFT_PAREN,
+			token.VAR,
+			token.IDENTIFIER,
+			token.EQUAL,
+			token.NUMBER,
+			token.SEMICOLON,
+			token.IDENTIFIER,
+			token.LESS,
+			token.NUMBER,
+			token.SEMICOLON,
+			token.IDENTIFIER,
+			token.EQUAL,
+			token.IDENTIFIER,
+			token.PLUS,
+			token.NUMBER,
+			token.RIGHT_PAREN,
+			token.LEFT_BRACE,
+			token.PRINT,
+			token.IDENTIFIER,
+			token.SEMICOLON,
+			token.RIGHT_BRACE,
+			token.EOF,
 		}
 
 		if len(tokens) != len(expectedTokens) {
