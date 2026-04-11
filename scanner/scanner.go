@@ -121,9 +121,9 @@ func (s *Scanner) scanToken() {
 	case '"':
 		s.string()
 	default:
-		if s.isDigit(c) {
+		if isDigit(c) {
 			s.number()
-		} else if s.isAlpha(c) {
+		} else if isAlpha(c) {
 			s.identifier()
 		} else {
 			lox.Error(s.line, "Unexpected character.")
@@ -142,20 +142,8 @@ func (s *Scanner) match(expected rune) bool {
 	return true
 }
 
-func (s *Scanner) isDigit(c rune) bool {
-	return c >= '0' && c <= '9'
-}
-
-func (s *Scanner) isAlpha(c rune) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
-}
-
-func (s *Scanner) isAlphaNumeric(c rune) bool {
-	return s.isAlpha(c) || s.isDigit(c)
-}
-
 func (s *Scanner) identifier() {
-	for s.isAlphaNumeric(s.peek()) {
+	for isAlphaNumeric(s.peek()) {
 		s.advance()
 	}
 
@@ -183,14 +171,14 @@ func (s *Scanner) peekNext() rune {
 }
 
 func (s *Scanner) number() {
-	for s.isDigit(s.peek()) {
+	for isDigit(s.peek()) {
 		s.advance()
 	}
 
 	// look for a fractional part
-	if s.peek() == '.' && s.isDigit(s.peekNext()) {
+	if s.peek() == '.' && isDigit(s.peekNext()) {
 		s.advance()
-		for s.isDigit(s.peek()) {
+		for isDigit(s.peek()) {
 			s.advance()
 		}
 	}
