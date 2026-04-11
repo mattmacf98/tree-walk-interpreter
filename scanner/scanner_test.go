@@ -1,4 +1,4 @@
-package main
+package scanner
 
 import (
 	"os"
@@ -16,7 +16,7 @@ func loadFile(path string) string {
 
 func TestScanner(t *testing.T) {
 	t.Run("basic scanner", func(t *testing.T) {
-		content := loadFile("./test_resources/basic.lox")
+		content := loadFile("./fixtures/basic.lox")
 		scanner := NewScanner(content)
 		tokens := scanner.ScanTokens()
 
@@ -52,7 +52,7 @@ func TestScanner(t *testing.T) {
 	})
 
 	t.Run("literal scanner", func(t *testing.T) {
-		content := loadFile("./test_resources/literals.lox")
+		content := loadFile("./fixtures/literals.lox")
 		scanner := NewScanner(content)
 		tokens := scanner.ScanTokens()
 

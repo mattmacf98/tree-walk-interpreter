@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"tree-walk-interpreter/lox"
+	"tree-walk-interpreter/scanner"
 )
-
-var hadError = false
 
 func main() {
 	args := os.Args[1:]
@@ -29,7 +29,7 @@ func runFile(path string) {
 	}
 	run(string(content))
 
-	if hadError {
+	if lox.HadError {
 		os.Exit(65)
 	}
 }
@@ -45,23 +45,14 @@ func runPrompt() {
 			continue
 		}
 		run(line)
-		hadError = false
+		lox.HadError = false
 	}
 }
 
 func run(source string) {
-	scanner := NewScanner(source)
-	tokens := scanner.ScanTokens()
+	scnnr := scanner.NewScanner(source)
+	tokens := scnnr.ScanTokens()
 	for _, token := range tokens {
 		fmt.Println(token)
 	}
-}
-
-func Error(line int, message string) {
-	hadError = true
-	report(line, "", message)
-}
-
-func report(line int, where string, message string) {
-	fmt.Printf("[line %d] Error%s: %s\n", line, where, message)
 }

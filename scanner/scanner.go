@@ -1,7 +1,8 @@
-package main
+package scanner
 
 import (
 	"strconv"
+	"tree-walk-interpreter/lox"
 	"tree-walk-interpreter/token"
 )
 
@@ -125,7 +126,7 @@ func (s *Scanner) scanToken() {
 		} else if s.isAlpha(c) {
 			s.identifier()
 		} else {
-			Error(s.line, "Unexpected character.")
+			lox.Error(s.line, "Unexpected character.")
 		}
 	}
 }
@@ -197,7 +198,7 @@ func (s *Scanner) number() {
 	lexeme := s.source[s.start:s.current]
 	num, err := strconv.ParseFloat(lexeme, 64)
 	if err != nil {
-		Error(s.line, "Invalid number literal.")
+		lox.Error(s.line, "Invalid number literal.")
 		s.addToken(token.NUMBER, nil)
 	} else {
 		s.addToken(token.NUMBER, num)
@@ -213,7 +214,7 @@ func (s *Scanner) string() {
 	}
 
 	if s.isAtEnd() {
-		Error(s.line, "Unterminated string.")
+		lox.Error(s.line, "Unterminated string.")
 		return
 	}
 
