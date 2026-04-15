@@ -1,32 +1,33 @@
-package parser
+package visitor
 
 import (
 	"fmt"
 	"strings"
+	"tree-walk-interpreter/parser/grammar"
 )
 
 type AstPrinter struct{}
 
-func (a *AstPrinter) VisitBinaryExpr(expr Binary) any {
+func (a *AstPrinter) VisitBinaryExpr(expr grammar.Binary) any {
 	return a.parenthesize(expr.Operator.Lexeme, expr.Left, expr.Right)
 }
 
-func (a *AstPrinter) VisitGroupingExpr(expr Grouping) any {
+func (a *AstPrinter) VisitGroupingExpr(expr grammar.Grouping) any {
 	return a.parenthesize("group", expr.Expression)
 }
 
-func (a *AstPrinter) VisitLiteralExpr(expr Literal) any {
+func (a *AstPrinter) VisitLiteralExpr(expr grammar.Literal) any {
 	if expr.Value == nil {
 		return "nil"
 	}
 	return fmt.Sprintf("%v", expr.Value)
 }
 
-func (a *AstPrinter) VisitUnaryExpr(expr Unary) any {
+func (a *AstPrinter) VisitUnaryExpr(expr grammar.Unary) any {
 	return a.parenthesize(expr.Operator.Lexeme, expr.Right)
 }
 
-func (a *AstPrinter) parenthesize(name string, exprs ...Expr) string {
+func (a *AstPrinter) parenthesize(name string, exprs ...grammar.Expr) string {
 	builder := strings.Builder{}
 
 	builder.WriteString("(")

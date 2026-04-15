@@ -1,8 +1,6 @@
-package parser
+package grammar
 
-import (
-	"tree-walk-interpreter/token"
-)
+import "tree-walk-interpreter/token"
 
 type Unary struct {
 	Operator token.Token

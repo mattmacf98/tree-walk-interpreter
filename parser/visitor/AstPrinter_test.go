@@ -1,19 +1,20 @@
-package parser
+package visitor
 
 import (
 	"testing"
+	"tree-walk-interpreter/parser/grammar"
 	"tree-walk-interpreter/token"
 )
 
 func TestAstPrinter(t *testing.T) {
-	expr := NewBinary(
-		NewUnary(
+	expr := grammar.NewBinary(
+		grammar.NewUnary(
 			token.Token{Type: token.MINUS, Lexeme: "-"},
-			NewLiteral(123),
+			grammar.NewLiteral(123),
 		),
 		token.Token{Type: token.STAR, Lexeme: "*"},
-		NewGrouping(
-			NewLiteral(45.67),
+		grammar.NewGrouping(
+			grammar.NewLiteral(45.67),
 		),
 	)
 

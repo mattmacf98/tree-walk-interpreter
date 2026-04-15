@@ -1,4 +1,4 @@
-package parser
+package grammar
 
 import "tree-walk-interpreter/token"
 

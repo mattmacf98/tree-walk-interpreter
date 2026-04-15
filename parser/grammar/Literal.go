@@ -1,4 +1,4 @@
-package parser
+package grammar
 
 type Literal struct {
 	Value any
