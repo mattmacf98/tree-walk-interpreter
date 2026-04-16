@@ -219,5 +219,6 @@ func (s *Scanner) advance() rune {
 }
 
 func (s *Scanner) addToken(tokenType token.TokenType, literal any) {
-	s.tokens = append(s.tokens, token.NewToken(tokenType, "", literal, s.line))
+	lexeme := s.source[s.start:s.current]
+	s.tokens = append(s.tokens, token.NewToken(tokenType, lexeme, literal, s.line))
 }
