@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"tree-walk-interpreter/interpreter"
 	"tree-walk-interpreter/lox"
+	"tree-walk-interpreter/parser"
 	"tree-walk-interpreter/scanner"
 )
 
@@ -52,7 +54,11 @@ func runPrompt() {
 func run(source string) {
 	scnnr := scanner.NewScanner(source)
 	tokens := scnnr.ScanTokens()
-	for _, token := range tokens {
-		fmt.Println(token)
+	prsr := parser.NewParser(tokens)
+	expr, err := prsr.Parse()
+	if err != nil {
+		return
 	}
+	intrptr := interpreter.Interpreter{}
+	intrptr.Interpret(expr)
 }

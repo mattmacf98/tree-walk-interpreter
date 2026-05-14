@@ -1,0 +1,131 @@
+package interpreter
+
+import (
+	"fmt"
+	"tree-walk-interpreter/lox"
+	"tree-walk-interpreter/parser/grammar"
+	"tree-walk-interpreter/token"
+)
+
+type Interpreter struct{}
+
+func (i *Interpreter) Interpret(expr grammar.Expr) {
+	value := i.evaluate(expr)
+	fmt.Println(value)
+}
+
+func (i *Interpreter) VisitLiteralExpr(expr grammar.Literal) any {
+	return expr.Value
+}
+
+func (i *Interpreter) VisitGroupingExpr(expr grammar.Grouping) any {
+	return i.evaluate(expr.Expression)
+}
+
+func (i *Interpreter) VisitUnaryExpr(expr grammar.Unary) any {
+	right := i.evaluate(expr.Right)
+
+	switch expr.Operator.Type {
+	case token.MINUS:
+		i.checkNumberOperand(expr.Operator, right)
+		return -right.(float64)
+	case token.BANG:
+		return !i.isTruthy(right)
+	}
+
+	// should never happen
+	lox.Error(expr.Operator.Line, "Unexpected unary operator.")
+	return nil
+}
+
+func (i *Interpreter) VisitBinaryExpr(expr grammar.Binary) any {
+	left := i.evaluate(expr.Left)
+	right := i.evaluate(expr.Right)
+
+	switch expr.Operator.Type {
+	case token.PLUS:
+		if leftString, ok := left.(string); ok {
+			if rightString, ok := right.(string); ok {
+				return leftString + rightString
+			}
+		}
+		if leftFloat, ok := left.(float64); ok {
+			if rightFloat, ok := right.(float64); ok {
+				return leftFloat + rightFloat
+			}
+		}
+		lox.Error(expr.Operator.Line, "Operands must be numbers.")
+		return nil
+	case token.MINUS:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) - right.(float64)
+	case token.STAR:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) * right.(float64)
+	case token.SLASH:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) / right.(float64)
+	case token.GREATER:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) > right.(float64)
+	case token.GREATER_EQUAL:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) >= right.(float64)
+	case token.LESS:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) < right.(float64)
+	case token.LESS_EQUAL:
+		i.checkNumberOperands(expr.Operator, left, right)
+		return left.(float64) <= right.(float64)
+	case token.BANG_EQUAL:
+		return !i.isEqual(left, right)
+	case token.EQUAL_EQUAL:
+		return i.isEqual(left, right)
+	}
+
+	lox.Error(expr.Operator.Line, "Unexpected binary operator.")
+	return nil
+}
+
+func (i *Interpreter) evaluate(expr grammar.Expr) any {
+	return expr.Accept(i)
+}
+
+func (i *Interpreter) checkNumberOperand(operator token.Token, operand any) {
+	_, ok := operand.(float64)
+	if !ok {
+		lox.Error(operator.Line, "Operand must be a number.")
+	}
+}
+
+func (i *Interpreter) checkNumberOperands(operator token.Token, left, right any) {
+	i.checkNumberOperand(operator, left)
+	i.checkNumberOperand(operator, right)
+}
+
+func (i *Interpreter) isTruthy(value any) bool {
+	if value == nil {
+		return false
+	}
+	if value.(bool) == false {
+		return false
+	}
+	return true
+}
+
+func (i *Interpreter) isEqual(a, b any) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil {
+		return false
+	}
+	return a == b
+}
+
+func (i *Interpreter) stringify(value any) string {
+	if value == nil {
+		return "nil"
+	}
+	return fmt.Sprintf("%v", value)
+}
