@@ -10,6 +10,6 @@ func NewGrouping(expression Expr) Grouping {
 	}
 }
 
-func (g Grouping) Accept(visitor Visitor) any {
+func (g Grouping) Accept(visitor ExprVisitor) any {
 	return visitor.VisitGroupingExpr(g)
 }

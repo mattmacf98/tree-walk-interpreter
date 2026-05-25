@@ -14,6 +14,6 @@ func NewUnary(operator token.Token, right Expr) Unary {
 	}
 }
 
-func (u Unary) Accept(visitor Visitor) any {
+func (u Unary) Accept(visitor ExprVisitor) any {
 	return visitor.VisitUnaryExpr(u)
 }

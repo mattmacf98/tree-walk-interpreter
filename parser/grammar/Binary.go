@@ -16,6 +16,6 @@ func NewBinary(left Expr, operator token.Token, right Expr) Binary {
 	}
 }
 
-func (b Binary) Accept(visitor Visitor) any {
+func (b Binary) Accept(visitor ExprVisitor) any {
 	return visitor.VisitBinaryExpr(b)
 }

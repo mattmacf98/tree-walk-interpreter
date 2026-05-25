@@ -10,6 +10,6 @@ func NewLiteral(value any) Literal {
 	}
 }
 
-func (l Literal) Accept(visitor Visitor) any {
+func (l Literal) Accept(visitor ExprVisitor) any {
 	return visitor.VisitLiteralExpr(l)
 }

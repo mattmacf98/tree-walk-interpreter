@@ -1,7 +1,6 @@
 package interpreter
 
 import (
-	"math"
 	"os"
 	"testing"
 	"tree-walk-interpreter/parser"
@@ -28,16 +27,25 @@ func TestInterpreter(t *testing.T) {
 		}
 
 		interp := &Interpreter{}
-		got := interp.evaluate(expr)
-
-		v, ok := got.(float64)
-		if !ok {
-			t.Fatalf("expected float64, got %T (%v)", got, got)
+		err = interp.Interpret(expr)
+		if err != nil {
+			t.Fatalf("interpret: %v", err)
 		}
+	})
 
-		want := -123.0 * 45.67
-		if math.Abs(v-want) > 1e-9 {
-			t.Errorf("expected %v, got %v", want, v)
+	t.Run("print interpreter", func(t *testing.T) {
+		content := loadFile("./fixtures/print_test.lox")
+		scnnr := scanner.NewScanner(content)
+		tokens := scnnr.ScanTokens()
+		prsr := parser.NewParser(tokens)
+		statements, err := prsr.Parse()
+		if err != nil {
+			t.Fatalf("parse: %v", err)
+		}
+		interp := &Interpreter{}
+		err = interp.Interpret(statements)
+		if err != nil {
+			t.Fatalf("interpret: %v", err)
 		}
 	})
 }

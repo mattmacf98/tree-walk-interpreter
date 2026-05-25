@@ -1,6 +1,6 @@
 package grammar
 
-type Visitor interface {
+type ExprVisitor interface {
 	VisitBinaryExpr(expr Binary) any
 	VisitGroupingExpr(expr Grouping) any
 	VisitLiteralExpr(expr Literal) any

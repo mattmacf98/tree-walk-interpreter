@@ -1,5 +1,5 @@
 package grammar
 
 type Expr interface {
-	Accept(visitor Visitor) any
+	Accept(visitor ExprVisitor) any
 }

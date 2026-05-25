@@ -4,14 +4,45 @@ import (
 	"fmt"
 	"tree-walk-interpreter/lox"
 	"tree-walk-interpreter/parser/grammar"
+	"tree-walk-interpreter/parser/statement"
 	"tree-walk-interpreter/token"
 )
 
 type Interpreter struct{}
 
-func (i *Interpreter) Interpret(expr grammar.Expr) {
-	value := i.evaluate(expr)
-	fmt.Println(value)
+func (i *Interpreter) Interpret(statements []statement.Stmt) error {
+	for _, stmt := range statements {
+		err := i.execute(stmt)
+		if err != nil {
+			lox.Error(0, err.Error())
+			return err
+		}
+	}
+	return nil
+}
+
+func (i *Interpreter) execute(stmt statement.Stmt) error {
+	result := stmt.Accept(i)
+	switch result.(type) {
+	case nil:
+		return nil
+	case error:
+		return result.(error)
+	default:
+		fmt.Println(i.stringify(result))
+		return nil
+	}
+}
+
+func (i *Interpreter) VisitExpressionStmt(stmt statement.ExpressionStmt) any {
+	i.evaluate(stmt.Expression)
+	return nil
+}
+
+func (i *Interpreter) VisitPrintStmt(stmt statement.PrintStmt) any {
+	value := i.evaluate(stmt.Expression)
+	fmt.Println(i.stringify(value))
+	return nil
 }
 
 func (i *Interpreter) VisitLiteralExpr(expr grammar.Literal) any {

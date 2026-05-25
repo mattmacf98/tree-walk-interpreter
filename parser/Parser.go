@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"tree-walk-interpreter/lox"
 	"tree-walk-interpreter/parser/grammar"
+	"tree-walk-interpreter/parser/statement"
 	"tree-walk-interpreter/token"
 )
 
@@ -24,12 +25,16 @@ func NewParser(tokens []token.Token) *Parser {
 	return &Parser{Tokens: tokens, Current: 0}
 }
 
-func (p *Parser) Parse() (grammar.Expr, error) {
-	expr, err := p.expression()
-	if err != nil {
-		return nil, err
+func (p *Parser) Parse() ([]statement.Stmt, error) {
+	statements := []statement.Stmt{}
+	for !p.isAtEnd() {
+		stmt, err := p.statement()
+		if err != nil {
+			return nil, err
+		}
+		statements = append(statements, stmt)
 	}
-	return expr, nil
+	return statements, nil
 }
 
 func (p *Parser) match(types ...token.TokenType) bool {
@@ -94,6 +99,37 @@ func (p *Parser) synchronize() {
 		}
 		p.advance()
 	}
+}
+
+func (p *Parser) statement() (statement.Stmt, error) {
+	if p.match(token.PRINT) {
+		return p.printStatement()
+	}
+	return p.expressionStatement()
+}
+
+func (p *Parser) printStatement() (statement.Stmt, error) {
+	value, err := p.expression()
+	if err != nil {
+		return nil, err
+	}
+	_, err = p.consume(token.SEMICOLON, "Expect ';' after value.")
+	if err != nil {
+		return nil, err
+	}
+	return statement.NewPrintStmt(value), nil
+}
+
+func (p *Parser) expressionStatement() (statement.Stmt, error) {
+	expr, err := p.expression()
+	if err != nil {
+		return nil, err
+	}
+	_, err = p.consume(token.SEMICOLON, "Expect ';' after expression.")
+	if err != nil {
+		return nil, err
+	}
+	return statement.NewExpressionStmt(expr), nil
 }
 
 func (p *Parser) expression() (grammar.Expr, error) {
