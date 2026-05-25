@@ -59,6 +59,6 @@ func run(source string) {
 	if err != nil {
 		return
 	}
-	intrptr := interpreter.Interpreter{}
+	intrptr := interpreter.NewInterpreter()
 	intrptr.Interpret(expr)
 }
