@@ -2,13 +2,22 @@ package interpreter
 
 import (
 	"fmt"
+	"tree-walk-interpreter/environment"
 	"tree-walk-interpreter/lox"
 	"tree-walk-interpreter/parser/expression"
 	"tree-walk-interpreter/parser/statement"
 	"tree-walk-interpreter/token"
 )
 
-type Interpreter struct{}
+type Interpreter struct {
+	environment environment.Environment
+}
+
+func NewInterpreter() Interpreter {
+	return Interpreter{
+		environment: environment.NewEnvironment(),
+	}
+}
 
 func (i *Interpreter) Interpret(statements []statement.Stmt) error {
 	for _, stmt := range statements {
@@ -45,8 +54,26 @@ func (i *Interpreter) VisitPrintStmt(stmt statement.PrintStmt) any {
 	return nil
 }
 
+func (i *Interpreter) VisitVarStmt(stmt statement.VarStmt) any {
+	value := any(nil)
+	if stmt.Right != nil {
+		value = i.evaluate(stmt.Right)
+	}
+	i.environment.Define(stmt.Name.Lexeme, value)
+	return nil
+}
+
 func (i *Interpreter) VisitLiteralExpr(expr expression.Literal) any {
 	return expr.Value
+}
+
+func (i *Interpreter) VisitVariableExpr(expr expression.Variable) any {
+	value, err := i.environment.Get(expr.Name)
+	if err != nil {
+		lox.Error(expr.Name.Line, err.Error())
+		return nil
+	}
+	return value
 }
 
 func (i *Interpreter) VisitGroupingExpr(expr expression.Grouping) any {

@@ -5,4 +5,5 @@ type ExprVisitor interface {
 	VisitGroupingExpr(expr Grouping) any
 	VisitLiteralExpr(expr Literal) any
 	VisitUnaryExpr(expr Unary) any
+	VisitVariableExpr(expr Variable) any
 }

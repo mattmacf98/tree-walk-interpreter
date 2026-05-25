@@ -27,6 +27,10 @@ func (a *AstPrinter) VisitUnaryExpr(expr expression.Unary) any {
 	return a.parenthesize(expr.Operator.Lexeme, expr.Right)
 }
 
+func (a *AstPrinter) VisitVariableExpr(expr expression.Variable) any {
+	return expr.Name.Lexeme
+}
+
 func (a *AstPrinter) parenthesize(name string, exprs ...expression.Expr) string {
 	builder := strings.Builder{}
 
