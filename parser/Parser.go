@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 	"tree-walk-interpreter/lox"
-	"tree-walk-interpreter/parser/grammar"
+	expression "tree-walk-interpreter/parser/expression"
 	"tree-walk-interpreter/parser/statement"
 	"tree-walk-interpreter/token"
 )
@@ -132,7 +132,7 @@ func (p *Parser) expressionStatement() (statement.Stmt, error) {
 	return statement.NewExpressionStmt(expr), nil
 }
 
-func (p *Parser) expression() (grammar.Expr, error) {
+func (p *Parser) expression() (expression.Expr, error) {
 	expr, err := p.equality()
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (p *Parser) expression() (grammar.Expr, error) {
 	return expr, nil
 }
 
-func (p *Parser) equality() (grammar.Expr, error) {
+func (p *Parser) equality() (expression.Expr, error) {
 	expr, err := p.comparison()
 	if err != nil {
 		return nil, err
@@ -152,12 +152,12 @@ func (p *Parser) equality() (grammar.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		expr = grammar.NewBinary(expr, operator, right)
+		expr = expression.NewBinary(expr, operator, right)
 	}
 	return expr, nil
 }
 
-func (p *Parser) comparison() (grammar.Expr, error) {
+func (p *Parser) comparison() (expression.Expr, error) {
 	expr, err := p.term()
 	if err != nil {
 		return nil, err
@@ -169,12 +169,12 @@ func (p *Parser) comparison() (grammar.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		expr = grammar.NewBinary(expr, operator, right)
+		expr = expression.NewBinary(expr, operator, right)
 	}
 	return expr, nil
 }
 
-func (p *Parser) term() (grammar.Expr, error) {
+func (p *Parser) term() (expression.Expr, error) {
 	expr, err := p.factor()
 	if err != nil {
 		return nil, err
@@ -186,12 +186,12 @@ func (p *Parser) term() (grammar.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		expr = grammar.NewBinary(expr, operator, right)
+		expr = expression.NewBinary(expr, operator, right)
 	}
 	return expr, nil
 }
 
-func (p *Parser) factor() (grammar.Expr, error) {
+func (p *Parser) factor() (expression.Expr, error) {
 	expr, err := p.unary()
 	if err != nil {
 		return nil, err
@@ -203,37 +203,37 @@ func (p *Parser) factor() (grammar.Expr, error) {
 		if err != nil {
 			return nil, err
 		}
-		expr = grammar.NewBinary(expr, operator, right)
+		expr = expression.NewBinary(expr, operator, right)
 	}
 	return expr, nil
 }
 
-func (p *Parser) unary() (grammar.Expr, error) {
+func (p *Parser) unary() (expression.Expr, error) {
 	if p.match(token.BANG, token.MINUS) {
 		operator := p.previous()
 		right, err := p.unary()
 		if err != nil {
 			return nil, err
 		}
-		return grammar.NewUnary(operator, right), nil
+		return expression.NewUnary(operator, right), nil
 	}
 
 	return p.primary()
 }
 
-func (p *Parser) primary() (grammar.Expr, error) {
+func (p *Parser) primary() (expression.Expr, error) {
 	if p.match(token.FALSE) {
-		return grammar.NewLiteral(false), nil
+		return expression.NewLiteral(false), nil
 	}
 	if p.match(token.TRUE) {
-		return grammar.NewLiteral(true), nil
+		return expression.NewLiteral(true), nil
 	}
 	if p.match(token.NIL) {
-		return grammar.NewLiteral(nil), nil
+		return expression.NewLiteral(nil), nil
 	}
 
 	if p.match(token.NUMBER, token.STRING) {
-		return grammar.NewLiteral(p.previous().Literal), nil
+		return expression.NewLiteral(p.previous().Literal), nil
 	}
 
 	if p.match(token.LEFT_PAREN) {
@@ -242,7 +242,7 @@ func (p *Parser) primary() (grammar.Expr, error) {
 			return nil, err
 		}
 		p.consume(token.RIGHT_PAREN, "Expect ')' after expression.")
-		return grammar.NewGrouping(expr), nil
+		return expression.NewGrouping(expr), nil
 	}
 
 	return nil, p.error(p.peek(), "Expect expression.")

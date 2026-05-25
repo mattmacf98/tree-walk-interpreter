@@ -1,4 +1,4 @@
-package grammar
+package expression
 
 type ExprVisitor interface {
 	VisitBinaryExpr(expr Binary) any

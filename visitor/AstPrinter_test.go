@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 	"tree-walk-interpreter/parser"
-	"tree-walk-interpreter/parser/grammar"
+	"tree-walk-interpreter/parser/expression"
 	"tree-walk-interpreter/scanner"
 	"tree-walk-interpreter/token"
 )
@@ -19,14 +19,14 @@ func loadFile(path string) string {
 }
 
 func TestAstPrinterGrammar(t *testing.T) {
-	expr := grammar.NewBinary(
-		grammar.NewUnary(
+	expr := expression.NewBinary(
+		expression.NewUnary(
 			token.Token{Type: token.MINUS, Lexeme: "-"},
-			grammar.NewLiteral(123),
+			expression.NewLiteral(123),
 		),
 		token.Token{Type: token.STAR, Lexeme: "*"},
-		grammar.NewGrouping(
-			grammar.NewLiteral(45.67),
+		expression.NewGrouping(
+			expression.NewLiteral(45.67),
 		),
 	)
 

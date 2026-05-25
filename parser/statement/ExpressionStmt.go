@@ -1,12 +1,12 @@
 package statement
 
-import "tree-walk-interpreter/parser/grammar"
+import "tree-walk-interpreter/parser/expression"
 
 type ExpressionStmt struct {
-	Expression grammar.Expr
+	Expression expression.Expr
 }
 
-func NewExpressionStmt(expression grammar.Expr) ExpressionStmt {
+func NewExpressionStmt(expression expression.Expr) ExpressionStmt {
 	return ExpressionStmt{
 		Expression: expression,
 	}

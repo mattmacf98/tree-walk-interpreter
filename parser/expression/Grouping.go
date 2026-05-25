@@ -1,4 +1,4 @@
-package grammar
+package expression
 
 type Grouping struct {
 	Expression Expr

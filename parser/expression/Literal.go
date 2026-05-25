@@ -1,4 +1,4 @@
-package grammar
+package expression
 
 type Literal struct {
 	Value any

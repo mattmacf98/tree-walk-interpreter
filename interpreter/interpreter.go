@@ -3,7 +3,7 @@ package interpreter
 import (
 	"fmt"
 	"tree-walk-interpreter/lox"
-	"tree-walk-interpreter/parser/grammar"
+	"tree-walk-interpreter/parser/expression"
 	"tree-walk-interpreter/parser/statement"
 	"tree-walk-interpreter/token"
 )
@@ -45,15 +45,15 @@ func (i *Interpreter) VisitPrintStmt(stmt statement.PrintStmt) any {
 	return nil
 }
 
-func (i *Interpreter) VisitLiteralExpr(expr grammar.Literal) any {
+func (i *Interpreter) VisitLiteralExpr(expr expression.Literal) any {
 	return expr.Value
 }
 
-func (i *Interpreter) VisitGroupingExpr(expr grammar.Grouping) any {
+func (i *Interpreter) VisitGroupingExpr(expr expression.Grouping) any {
 	return i.evaluate(expr.Expression)
 }
 
-func (i *Interpreter) VisitUnaryExpr(expr grammar.Unary) any {
+func (i *Interpreter) VisitUnaryExpr(expr expression.Unary) any {
 	right := i.evaluate(expr.Right)
 
 	switch expr.Operator.Type {
@@ -69,7 +69,7 @@ func (i *Interpreter) VisitUnaryExpr(expr grammar.Unary) any {
 	return nil
 }
 
-func (i *Interpreter) VisitBinaryExpr(expr grammar.Binary) any {
+func (i *Interpreter) VisitBinaryExpr(expr expression.Binary) any {
 	left := i.evaluate(expr.Left)
 	right := i.evaluate(expr.Right)
 
@@ -118,7 +118,7 @@ func (i *Interpreter) VisitBinaryExpr(expr grammar.Binary) any {
 	return nil
 }
 
-func (i *Interpreter) evaluate(expr grammar.Expr) any {
+func (i *Interpreter) evaluate(expr expression.Expr) any {
 	return expr.Accept(i)
 }
 
