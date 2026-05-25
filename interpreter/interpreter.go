@@ -32,11 +32,11 @@ func (i *Interpreter) Interpret(statements []statement.Stmt) error {
 
 func (i *Interpreter) execute(stmt statement.Stmt) error {
 	result := stmt.Accept(i)
-	switch result.(type) {
+	switch result := result.(type) {
 	case nil:
 		return nil
 	case error:
-		return result.(error)
+		return result
 	default:
 		fmt.Println(i.stringify(result))
 		return nil
