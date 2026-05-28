@@ -6,4 +6,5 @@ type ExprVisitor interface {
 	VisitLiteralExpr(expr Literal) any
 	VisitUnaryExpr(expr Unary) any
 	VisitVariableExpr(expr Variable) any
+	VisitAssignExpr(expr Assign) any
 }

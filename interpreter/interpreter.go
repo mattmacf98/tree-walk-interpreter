@@ -67,6 +67,16 @@ func (i *Interpreter) VisitLiteralExpr(expr expression.Literal) any {
 	return expr.Value
 }
 
+func (i *Interpreter) VisitAssignExpr(expr expression.Assign) any {
+	value := i.evaluate(expr.Value)
+	err := i.environment.Assign(expr.Name.Lexeme, value)
+	if err != nil {
+		lox.Error(expr.Name.Line, err.Error())
+		return nil
+	}
+	return value
+}
+
 func (i *Interpreter) VisitVariableExpr(expr expression.Variable) any {
 	value, err := i.environment.Get(expr.Name)
 	if err != nil {

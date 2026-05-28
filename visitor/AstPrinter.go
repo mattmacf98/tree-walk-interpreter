@@ -31,6 +31,10 @@ func (a *AstPrinter) VisitVariableExpr(expr expression.Variable) any {
 	return expr.Name.Lexeme
 }
 
+func (a *AstPrinter) VisitAssignExpr(expr expression.Assign) any {
+	return a.parenthesize(expr.Name.Lexeme, expr.Value)
+}
+
 func (a *AstPrinter) parenthesize(name string, exprs ...expression.Expr) string {
 	builder := strings.Builder{}
 

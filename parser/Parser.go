@@ -170,10 +170,30 @@ func (p *Parser) expressionStatement() (statement.Stmt, error) {
 }
 
 func (p *Parser) expression() (expression.Expr, error) {
+	return p.assignment()
+}
+
+func (p *Parser) assignment() (expression.Expr, error) {
 	expr, err := p.equality()
 	if err != nil {
 		return nil, err
 	}
+
+	if p.match(token.EQUAL) {
+		equals := p.previous()
+		value, err := p.assignment()
+		if err != nil {
+			return nil, err
+		}
+
+		if _, ok := expr.(expression.Variable); !ok {
+			return nil, p.error(equals, "Invalid assignment target.")
+		}
+
+		name := expr.(expression.Variable).Name
+		return expression.NewAssign(name, value), nil
+	}
+
 	return expr, nil
 }
 
